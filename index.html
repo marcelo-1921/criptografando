@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criptografia com Chave de Palavra</title>
+    <link rel="shortcut icon" href="#">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #5cb85c;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Criptografar e Descriptografar</h1>
+        
+        <label for="chave">Chave (palavra):</label>
+        <input type="text" id="chave" value="secreta">
+        
+        <h3>Digite sua mensagem:</h3>
+        <textarea id="textoOriginal" placeholder="Digite sua mensagem aqui..."></textarea>
+        
+        <button onclick="criptografar()">Criptografar</button>
+        <button onclick="descriptografar()">Descriptografar</button>
+        
+        <h3>Resultado:</h3>
+        <textarea id="textoResultado" readonly></textarea>
+    </div>
+
+    <script>
+        // Funções de criptografia em JavaScript com chave de palavra
+        function criptoReplace(text, chave) {
+            const originalChars = 'abcdefghijklmnopqrstuvwxyz';
+            const originalCharsUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let resultado = '';
+            let chaveIndex = 0;
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                let alfabeto;
+                let deslocamento = 0;
+
+                // Converte a letra da chave em um número (0-25)
+                const charChave = chave[chaveIndex % chave.length].toLowerCase();
+                if (originalChars.includes(charChave)) {
+                    deslocamento = originalChars.indexOf(charChave);
+                }
+                
+                if (originalChars.includes(char)) {
+                    alfabeto = originalChars;
+                    const index = alfabeto.indexOf(char);
+                    const novoIndex = (index + deslocamento) % 26;
+                    resultado += alfabeto[novoIndex];
+                    chaveIndex++; // Avança na chave apenas para letras do alfabeto
+                } else if (originalCharsUpper.includes(char)) {
+                    alfabeto = originalCharsUpper;
+                    const index = alfabeto.indexOf(char);
+                    const novoIndex = (index + deslocamento) % 26;
+                    resultado += alfabeto[novoIndex];
+                    chaveIndex++; // Avança na chave apenas para letras do alfabeto
+                } else {
+                    resultado += char;
+                }
+            }
+            return resultado;
+        }
+        
+        function descriptoReplace(text, chave) {
+            const originalChars = 'abcdefghijklmnopqrstuvwxyz';
+            const originalCharsUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let resultado = '';
+            let chaveIndex = 0;
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                let alfabeto;
+                let deslocamento = 0;
+
+                // Converte a letra da chave em um número
+                const charChave = chave[chaveIndex % chave.length].toLowerCase();
+                if (originalChars.includes(charChave)) {
+                    deslocamento = originalChars.indexOf(charChave);
+                }
+
+                if (originalChars.includes(char)) {
+                    alfabeto = originalChars;
+                    const index = alfabeto.indexOf(char);
+                    const novoIndex = (index - deslocamento + 26) % 26;
+                    resultado += alfabeto[novoIndex];
+                    chaveIndex++;
+                } else if (originalCharsUpper.includes(char)) {
+                    alfabeto = originalCharsUpper;
+                    const index = alfabeto.indexOf(char);
+                    const novoIndex = (index - deslocamento + 26) % 26;
+                    resultado += alfabeto[novoIndex];
+                    chaveIndex++;
+                } else {
+                    resultado += char;
+                }
+            }
+            return resultado;
+        }
+
+        // Funções para manipular a página
+        function criptografar() {
+            const textoOriginal = document.getElementById('textoOriginal').value;
+            const chave = document.getElementById('chave').value;
+            const textoCriptografado = criptoReplace(textoOriginal, chave);
+            document.getElementById('textoResultado').value = textoCriptografado;
+        }
+
+        function descriptografar() {
+            const textoCriptografado = document.getElementById('textoOriginal').value;
+            const chave = document.getElementById('chave').value;
+            const textoDescriptografado = descriptoReplace(textoCriptografado, chave);
+            document.getElementById('textoResultado').value = textoDescriptografado;
+        }
+    </script>
+
+</body>
+</html>
